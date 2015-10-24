@@ -15,7 +15,7 @@ public class Player extends MonoBehaviour {
 	function Start () {
 	    this.dobj = GameObject.Find("PlayerDeck");
 		this.id = GetInstanceID();
-		this.cardDefaults = GameObject.Find("GameController").GetComponent(CardDefaults);
+		this.cardDefaults = GameObject.Find("Gameobject").GetComponent(CardDefaults);
 		var startDeck = this.cardDefaults.getStartingDeck();
 		this.hand = new Hand();
 //		this.discard = new Deck(new Array(),0,0);
@@ -25,14 +25,14 @@ public class Player extends MonoBehaviour {
 		return this.id;
 	}
 	
-	private function isTurn(gameController:GameController) {
+	private function isTurn(gameController:Gameobject) {
 		var currentPlayer = gameController.getCurrentPlayer();
 		if (currentPlayer.getId() != this.id) {
 			return false;
 		}
 		return true;
 	}
-	private function dealCards(gameController:GameController, location){
+	private function dealCards(gameController:Gameobject, location){
 	        //var dealtCards:Array = this.deck.deal(5, this.discard, location);
 //			this.hand.resetHand(dealtCards);
 	}
@@ -42,7 +42,7 @@ public class Player extends MonoBehaviour {
         }
         this.cardsCreatedThisTurn=new Array();
     }
-	private function cleanUp(gameController:GameController) {
+	private function cleanUp(gameController:Gameobject) {
 	    //this.hand.unDraw();
 		//this.discard.addToDeck(this.hand.emptyHand(), "discard");
 		//this.discard.addToDeck(this.playArea.empty());
@@ -50,7 +50,7 @@ public class Player extends MonoBehaviour {
 		gameController.updatePlayer();
 	}
 	
-	private function showCards(gameController:GameController) {
+	private function showCards(gameController:Gameobject) {
 	    
 	    //this.dobj.GetComponent(SpriteRenderer).sprite = deck.sprite;
 //	    this.deckObject = Instantiate(this.dobj, new Vector3(deck.xPos, deck.yPos, 0), Quaternion.identity);
@@ -72,10 +72,10 @@ public class Player extends MonoBehaviour {
 		}*/
 		return;
 	}
-	private function doTurn(gameController:GameController) {
+	private function doTurn(gameController:Gameobject) {
 		return;
 	}
-	private function doTurnState(gameController:GameController) {
+	private function doTurnState(gameController:Gameobject) {
 	    var state = this.turnState;
 	    if(state=="finished") {
 	        this.cleanUp(gameController);
@@ -93,7 +93,7 @@ public class Player extends MonoBehaviour {
 	        this.turnState="finished";
 	}
 	function Update () {
-		var gameController:GameController = GameObject.Find("GameController").GetComponent(GameController);
+		var gameController:Gameobject = GameObject.Find("GameController").GetComponent(Gameobject);
 		
 		if(!this.isTurn(gameController)){
 			return;
