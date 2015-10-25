@@ -24,25 +24,43 @@ public class GameMaster extends MonoBehaviour {
         Cards.NormalTrain
     );
 
-	function Start () {
-	    // Choose Non-Default Tableau Cards
-	    board = GameObject.Find("GameMaster");
-	    var layRailsGO = board.AddComponent( Cards.LayRails.ToString() );
-	    var stationExpansionGO = board.AddComponent(Cards.StationExpansion.ToString());
-	    var normalTrainGO = board.AddComponent( Cards.NormalTrain.ToString());
+    function Start () {
+        // Choose Non-Default Tableau Cards
+        var cardsInGame = new Array();
+        cardsInGame.Push( Cards.LayRails );
+        cardsInGame.Push( Cards.StationExpansion );
+        cardsInGame.Push( Cards.NormalTrain );
 
-	    var cobj = Instantiate( layRailsGO, new Vector3(0,0,10), Quaternion.identity);
-	    var cd:CardDragger = cobj.GetComponent("CardDragger");
-	    cd.location = "tableau";
+        board = GameObject.Find("GameMaster");
 
-	    cobj = Instantiate( stationExpansionGO, new Vector3(0,0,10), Quaternion.identity);
-	    cd = cobj.GetComponent("CardDragger");
-	    cd.location = "tableau";
+        generateCardComponents( cardsInGame );
 
-	    cobj = Instantiate( normalTrainGO, new Vector3(0,0,10), Quaternion.identity);
-	    cd = cobj.GetComponent("CardDragger");
-        cd.location = "tableau";
-        // Continue for all 'in play' cards
+    }
+
+    private function generateCardComponents( cards:Array ) {
+
+        for ( var card : Cards in cards ) {
+            var gameObject;
+            switch ( card ) {
+                case Cards.LayRails:
+                    gameObject = board.AddComponent.<LayRails>();
+                    break;
+                case Cards.StationExpansion:
+                    gameObject = board.AddComponent.<StationExpansion>();
+                    break;
+                case Cards.NormalTrain:
+                    gameObject = board.AddComponent.<NormalTrain>();
+                    break;
+                default:
+                    print ( "Invalid Card Type" );
+                    break;
+            }
+            // TODO: Change the Vector Location based on the index
+            var obj:GameObject = Instantiate( gameObject, new Vector3(0,0,10), Quaternion.identity);
+            var cd:CardDragger = obj.GetComponent("CardDragger");
+            cd.location = "tableau";
+
+        }
 	}
 
 	function Update () {
