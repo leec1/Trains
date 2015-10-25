@@ -7,7 +7,7 @@ public class Player extends MonoBehaviour {
 	private var vp:int=0;
 	private var railsRemaining:int = 20;
 	private var color:Color;
-	private var deck:Deck;
+	private var deck:DeckObject;
 	private var hand:Hand;
 	private var discard:Deck;
 	private var deckObject:GameObject;

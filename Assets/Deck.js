@@ -16,3 +16,7 @@ public class Deck extends MonoBehaviour {
 
 	}
 }
+public class DeckObject {
+
+
+}
