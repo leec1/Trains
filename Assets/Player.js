@@ -1,42 +1,52 @@
 ﻿#pragma strict
 public class Player extends MonoBehaviour {
 
-    enum PlayerState { NotActive, Draw, Play, CleanUp }
+    public enum PlayerState { NotActive, Draw, Play, CleanUp };
 
 	private var id;
 	private var vp:int=0;
 	private var railsRemaining:int = 20;
 	private var color:Color;
-	private var deck:DeckObject;
+
+	private var deck:Deck;
+    private var discard:Deck;
 	private var hand:Hand;
-	private var discard:Deck;
-	private var deckObject:GameObject;
-	private var cardDefaults:CardDefaults;
+
     private var cardsCreatedThisTurn = new Array();
 	private var turnState:PlayerState = PlayerState.NotActive;
 	private var dobj:GameObject;
 
 	function Start () {
-	    this.dobj = GameObject.Find("PlayerDeck");
-		this.id = GetInstanceID();
-		this.cardDefaults = this.dobj.GetComponent(CardDefaults);
-		var startDeck = this.cardDefaults.getStartingDeck();
+	    this.deck= new Deck();
+	    this.deck.setRole( "draw" );
+
+	    this.discard = new Deck();
+	    this.discard.setRole( "discard" );
+
+	    this.id = GetInstanceID();
 		this.hand = new Hand();
-//		this.discard = new Deck(new Array(),0,0);
 	}
 	
+    public function createStartingDeck( cards:Array ) {
+        // Force to only happen once
+        for ( var newCard : GameMaster.Cards in cards ) {
+            this.deck.addToTop( newCard );
+        }
+        this.deck.shuffle();
+    }
+
 	public function getId() {
 		return this.id;
 	}
 	
-	private function isTurn(gameController:Gameobject) {
+	private function isTurn(gameController:GameMaster) {
 		var currentPlayer = gameController.getCurrentPlayer();
 		if (currentPlayer.getId() != this.id) {
 			return false;
 		}
 		return true;
 	}
-	private function dealCards(gameController:Gameobject, location){
+	private function dealCards(gameController:GameMaster, location){
 	        //var dealtCards:Array = this.deck.deal(5, this.discard, location);
 //			this.hand.resetHand(dealtCards);
 	}
@@ -46,7 +56,7 @@ public class Player extends MonoBehaviour {
         }
         this.cardsCreatedThisTurn=new Array();
     }
-	private function cleanUp(gameController:Gameobject) {
+	private function cleanUp(gameController:GameMaster) {
 	    //this.hand.unDraw();
 		//this.discard.addToDeck(this.hand.emptyHand(), "discard");
 		//this.discard.addToDeck(this.playArea.empty());
@@ -54,7 +64,7 @@ public class Player extends MonoBehaviour {
 		gameController.updatePlayer();
 	}
 	
-	private function showCards(gameController:Gameobject) {
+	private function showCards(gameController:GameMaster) {
 	    
 	    //this.dobj.GetComponent(SpriteRenderer).sprite = deck.sprite;
 //	    this.deckObject = Instantiate(this.dobj, new Vector3(deck.xPos, deck.yPos, 0), Quaternion.identity);
@@ -76,10 +86,10 @@ public class Player extends MonoBehaviour {
 		}*/
 		return;
 	}
-	private function doTurn(gameController:Gameobject) {
+	private function doTurn(gameController:GameMaster) {
 		return;
 	}
-	private function doTurnState(gameController:Gameobject) {
+	private function doTurnState(gameController:GameMaster) {
 	    var state = this.turnState;
 	    switch ( state ) {
 	        case this.PlayerState.NotActive:
@@ -107,7 +117,7 @@ public class Player extends MonoBehaviour {
 	        this.turnState=PlayerState.CleanUp;
 	}
 	function Update () {
-		var gameController:Gameobject = GameObject.Find("GameController").GetComponent(Gameobject);
+		var gameController:GameMaster = GameObject.Find("GameMaster").GetComponent(GameMaster);
 		
 		if(!this.isTurn(gameController)){
 			return;
@@ -129,6 +139,9 @@ public class Player extends MonoBehaviour {
 	}
 	public function getDeck() {
 		return this.deck;
+	}
+    public function getCurrentState() {
+        return this.turnState;
 	}
 	
 }
