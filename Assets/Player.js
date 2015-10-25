@@ -19,7 +19,7 @@ public class Player extends MonoBehaviour {
 	function Start () {
 	    this.dobj = GameObject.Find("PlayerDeck");
 		this.id = GetInstanceID();
-		this.cardDefaults = Gthis.dobj.GetComponent(CardDefaults);
+		this.cardDefaults = this.dobj.GetComponent(CardDefaults);
 		var startDeck = this.cardDefaults.getStartingDeck();
 		this.hand = new Hand();
 //		this.discard = new Deck(new Array(),0,0);
@@ -82,19 +82,18 @@ public class Player extends MonoBehaviour {
 	private function doTurnState(gameController:Gameobject) {
 	    var state = this.turnState;
 	    switch ( state ) {
-	        case PlayerState.NotActive:
+	        case this.PlayerState.NotActive:
                 // umm.....
-	            break;
-	        case PlayerState.Draw:
+	        case this.PlayerState.Draw:
 	            this.dealCards(gameController, "hand");
 	            this.showCards(gameController);
 	            this.turnState = PlayerState.Play;
 	            break;
-	        case PlayerState.Play:
+	        case this.PlayerState.Play:
 	            this.doTurn(gameController);
 	            this.turnState = PlayerState.CleanUp;
 	            break;
-	        case PlayState.CleanUp:
+	        case this.PlayerState.CleanUp:
 	            this.cleanUp(gameController);
 	            this.turnState = PlayerState.NotActive;
 	            break;
@@ -105,7 +104,7 @@ public class Player extends MonoBehaviour {
 	}
 	function OnGUI() {
 	    if (GUI.Button(Rect(10,600,75,30),"End Turn"))
-	        this.turnState=PlayState.CleanUp;
+	        this.turnState=PlayerState.CleanUp;
 	}
 	function Update () {
 		var gameController:Gameobject = GameObject.Find("GameController").GetComponent(Gameobject);
