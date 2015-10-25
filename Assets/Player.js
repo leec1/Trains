@@ -1,5 +1,8 @@
 ﻿#pragma strict
 public class Player extends MonoBehaviour {
+
+    enum PlayerState { NotActive, Draw, Play, CleanUp }
+
 	private var id;
 	private var vp:int=0;
 	private var railsRemaining:int = 20;
@@ -10,12 +13,13 @@ public class Player extends MonoBehaviour {
 	private var deckObject:GameObject;
 	private var cardDefaults:CardDefaults;
     private var cardsCreatedThisTurn = new Array();
-	private var turnState = "finished";
+	private var turnState:PlayerState = PlayerState.NotActive;
 	private var dobj:GameObject;
+
 	function Start () {
 	    this.dobj = GameObject.Find("PlayerDeck");
 		this.id = GetInstanceID();
-		this.cardDefaults = GameObject.Find("Gameobject").GetComponent(CardDefaults);
+		this.cardDefaults = Gthis.dobj.GetComponent(CardDefaults);
 		var startDeck = this.cardDefaults.getStartingDeck();
 		this.hand = new Hand();
 //		this.discard = new Deck(new Array(),0,0);
@@ -77,20 +81,31 @@ public class Player extends MonoBehaviour {
 	}
 	private function doTurnState(gameController:Gameobject) {
 	    var state = this.turnState;
-	    if(state=="finished") {
-	        this.cleanUp(gameController);
-	        this.turnState = "deal";
-	    }else if(state == "deal") {
-	        this.dealCards(gameController, "hand");
-	        this.showCards(gameController);
-	        this.turnState="doTurn";
-	    }else if(state=="doTurn") {   
-	        this.doTurn(gameController);
+	    switch ( state ) {
+	        case PlayerState.NotActive:
+                // umm.....
+	            break;
+	        case PlayerState.Draw:
+	            this.dealCards(gameController, "hand");
+	            this.showCards(gameController);
+	            this.turnState = PlayerState.Play;
+	            break;
+	        case PlayerState.Play:
+	            this.doTurn(gameController);
+	            this.turnState = PlayerState.CleanUp;
+	            break;
+	        case PlayState.CleanUp:
+	            this.cleanUp(gameController);
+	            this.turnState = PlayerState.NotActive;
+	            break;
+	        default:
+                // um......
+	            break;
 	    }
 	}
 	function OnGUI() {
 	    if (GUI.Button(Rect(10,600,75,30),"End Turn"))
-	        this.turnState="finished";
+	        this.turnState=PlayState.CleanUp;
 	}
 	function Update () {
 		var gameController:Gameobject = GameObject.Find("GameController").GetComponent(Gameobject);
